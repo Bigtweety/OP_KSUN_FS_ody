@@ -859,16 +859,28 @@ runs:
         retry_clone "https://github.com/WildKernels/kernel_patches.git" "main" "1"
         
         if [ "${{ env.OP_SUSFS }}" = true ]; then
-          # Create your build directory
-          mkdir -p kernel-build
+          # 1. Clean up old environments
+          rm -rf "$SUSFS_FOLDER" /tmp/susfs_extract 2>/dev/null
+          mkdir -p /tmp/susfs_extract
           
-          # Unzip the file that was checked out by actions/checkout from your repo
-          unzip -q $GITHUB_WORKSPACE/patches/susfs_source.zip -d kernel-build/susfs_temp
+          # 2. Extract your manually uploaded zip file from the repo workspace
+          # Assumes your zip is located at: patches/susfs_source.zip
+          unzip -q "$GITHUB_WORKSPACE/patches/susfs_source.zip" -d /tmp/susfs_extract
           
-          # Standardize the folder name for the rest of your patching script
-          mv kernel-build/susfs_temp/* kernel-build/susfs_source
-          rm -rf kernel-build/susfs_temp
-          echo "SUSFS_COMMIT_SHA=$SUSFS_BRANCH" >> $GITHUB_ENV
+          # 3. Handle folder structures dynamically (re-maps whatever is inside the ZIP to $SUSFS_FOLDER)
+          # This accounts for GitHub/GitLab adding subdirectories (like SUSFS4KSU-commit-hash) inside the zip
+          if [ $(ls -1 /tmp/susfs_extract | wc -l) -eq 1 ] && [ -d /tmp/susfs_extract/* ]; then
+            mv /tmp/susfs_extract/* "$SUSFS_FOLDER"
+          else
+            mv /tmp/susfs_extract "$SUSFS_FOLDER"
+          fi
+          
+          # 4. Clean up the temp workspace
+          rm -rf /tmp/susfs_extract
+          
+          # 5. Set fake commit indicator for the build metadata layout
+          echo "SUSFS_COMMIT_SHA=Manual-Zip-Upload" >> $GITHUB_ENV
+          echo "✅ Manual SUSFS ZIP extracted successfully to $SUSFS_FOLDER"
         fi
         echo "✅ Dependencies cloned"
         echo "::endgroup::"
