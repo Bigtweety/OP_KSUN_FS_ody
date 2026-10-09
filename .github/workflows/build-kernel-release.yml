@@ -11,7 +11,7 @@ on:
         description: 'Provide a custom release tag (e.g., v2.0.0). Leave empty to auto-generate.'
         required: false
         type: string
-        default: ''
+        default: 'Ody-20261009'
       op_model:
         description: 'Select the OnePlus Devices to build'
         required: true
@@ -75,7 +75,7 @@ on:
           - OP-TURBO-6
           - OP-TURBO-6V
           - OP-TURBO-6X
-        default: All
+        default: OP12
       android_version_filter:
         description: 'Select the Android Version to build'
         required: true
@@ -88,7 +88,7 @@ on:
           - A14+A15
           - A15+A16
           - A14+A16
-        default: All
+        default: A16
       kernel_version_filter:
         description: 'Select the Kernel Version to build'
         required: true
@@ -100,7 +100,7 @@ on:
           - android14-6.1
           - android15-6.6
           - android16-6.12
-        default: All
+        default: android14-6.1.141
       ksu_options:
         description: 'Enter KernelSU build json'
         required: true
@@ -115,7 +115,7 @@ on:
         description: '🔋 Global Master Switch: Enable Battery Optimization for all models'
         required: true
         type: boolean
-        default: false
+        default: true
       enable_ntsync:
         description: '🕹️ Global Master Switch: Enable NTSync for all models'
         required: true
@@ -148,7 +148,7 @@ on:
       build_timestamp:
         description: 'Custom kernel build timestamp for uname -a (e.g. "Tue Feb 10 10:01:02 UTC 2026"). Leave empty for current time.'
         type: string
-        default: ''
+        default: '#1 SMP PREEMPT Thu Aug  6 07:52:48 UTC 2026'
       workflow_mode:
         description: 'Select the workflow mode'
         required: true
