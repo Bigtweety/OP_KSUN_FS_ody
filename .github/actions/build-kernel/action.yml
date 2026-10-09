@@ -880,6 +880,7 @@ runs:
           
           # 5. Set fake commit indicator for the build metadata layout
           echo "SUSFS_COMMIT_SHA=Manual-Zip-Upload" >> $GITHUB_ENV
+          echo "SUSFS_COMMIT_SHA=$SUSFS_BRANCH" >> $GITHUB_ENV
           echo "✅ Manual SUSFS ZIP extracted successfully to $SUSFS_FOLDER"
         fi
         echo "✅ Dependencies cloned"
