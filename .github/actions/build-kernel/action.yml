@@ -859,11 +859,15 @@ runs:
         retry_clone "https://github.com/WildKernels/kernel_patches.git" "main" "1"
         
         if [ "${{ env.OP_SUSFS }}" = true ]; then
-          echo "Using SUSFS branch/commit: $SUSFS_BRANCH"
-          if ! retry_fetch_archive "https://gitlab.com/simonpunk/susfs4ksu.git" "$SUSFS_BRANCH"; then
-            echo "::error::Failed to fetch SUSFS archive after multiple attempts"
-            exit 1
-          fi
+          # Create your build directory
+          mkdir -p kernel-build
+          
+          # Unzip the file that was checked out by actions/checkout from your repo
+          unzip -q $GITHUB_WORKSPACE/patches/susfs_source.zip -d kernel-build/susfs_temp
+          
+          # Standardize the folder name for the rest of your patching script
+          mv kernel-build/susfs_temp/* kernel-build/susfs_source
+          rm -rf kernel-build/susfs_temp
           echo "SUSFS_COMMIT_SHA=$SUSFS_BRANCH" >> $GITHUB_ENV
         fi
         echo "✅ Dependencies cloned"
@@ -1829,6 +1833,7 @@ runs:
         cd "$COMMON_KERNEL_FOLDER"
         mkdir -p out
         CUSTOM_LOCALVERSION="-${ANDROID_VER}-${OP_UNAME}"
+        CUSTOM_LOCALVERSION="-android14-11"
         echo "CUSTOM_LOCALVERSION=$CUSTOM_LOCALVERSION" >> "$GITHUB_ENV"
 
     - name: Disable GPUEB
